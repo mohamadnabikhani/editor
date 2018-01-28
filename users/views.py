@@ -4,7 +4,11 @@ from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.response import Response
 from django.http import HttpResponse
 from serializers import *
+from csrf import CsrfExemptSessionAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from django.utils.decorators import method_decorator
 from django.contrib.auth import authenticate as auth_authenticate
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.db import IntegrityError
@@ -27,7 +31,14 @@ from django.shortcuts import render
 # Create your views here.
 
 class Singup(APIView):
+
+
     permission_classes = ()
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # @method_decorator(csrf_exempt)
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super(Singup, self).dispatch(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         # user = request.user
         user = User()
@@ -36,7 +47,8 @@ class Singup(APIView):
         data = serializer_data.data
         try:
             user = user.create_user(data=data,request=request)
-
+            user = auth_authenticate(request=request, username=user.username, password=user.password)
+            auth_login(request=request, user=user)
 
             output_serialized = Output_UserSerializer(instance=user)
             return Response({"user": output_serialized.data}, status=200)
@@ -46,6 +58,10 @@ class Singup(APIView):
 
 class Login(APIView):
     permission_classes = ()
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # @method_decorator(csrf_exempt)
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super(Login, self).dispatch(request, *args, **kwargs)
     def post(self, request, *args, **kwargs):
         # user = request.user
 
@@ -72,7 +88,11 @@ class Login(APIView):
 
 class Logout(APIView):
     permission_classes = (IsAuthenticated,)
-    def post(self, request, *args, **kwargs):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # @method_decorator(csrf_exempt)
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super(Logout, self).dispatch(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
         user = request.user
         auth_logout(request=request)
         return Response("user is logged out", status=200)

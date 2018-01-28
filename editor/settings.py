@@ -26,7 +26,10 @@ SECRET_KEY = '8i6i81akohwfw6%7#-zvnm$@6md(3gf%s!t_)@^v^3#gck1$$9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["172.18.221.102","127.0.0.1" ]
+APPEND_SLASH = False
+
+
 
 
 # Application definition
@@ -36,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'corsheaders',
+    'rest_framework.authtoken',
+
+
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
@@ -44,9 +51,12 @@ INSTALLED_APPS = [
 
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -54,7 +64,31 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:9001'
+    'localhost:9001',
+)
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+    '/var/www/static/',
+)
+
+
 ROOT_URLCONF = 'editor.urls'
+
+# CORS_ORIGIN_WHITELIST = (
+#     'google.com',
+#     'hostname.example.com',
+#     'localhost:8000',
+#     '127.0.0.1:5000',
+#     '127.0.0.1:8000',
+#     '172.18.221.102:8000'
+# )
 
 TEMPLATES = [
     {
@@ -100,6 +134,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+
     )
 
 }
@@ -144,3 +180,4 @@ AUTH_USER_MODEL = 'users.User'
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = '/home/mohammad/PycharmProjects/editor/editor'

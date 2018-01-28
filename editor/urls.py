@@ -16,9 +16,17 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import  include, url
+from django.conf.urls.static import static
+from django.conf import settings
+# from . import views as local_view
+from rest_framework.authtoken import views as rest_framework_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^user/' , include('users.urls'),name='user'),
     url(r'^project/', include('project.urls'), name='project'),
-]
+    url(r'^get_auth_token$', rest_framework_views.obtain_auth_token, name='get_auth_token'),
+    # url(
+    #     r'^$', 'django.contrib.staticfiles.views.serve', kwargs={
+    #         'path': 'index.html', 'document_root': settings.STATIC_ROOT}),
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -2,6 +2,11 @@
 from __future__ import unicode_literals
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.response import Response
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from csrf import CsrfExemptSessionAuthentication
+from rest_framework.authentication import  BasicAuthentication
+
 from django.http import HttpResponse
 from serializers import *
 from users.models import *
@@ -55,6 +60,10 @@ class ProjectListJoint(APIView):
 
 class AddUserProject(APIView):
     permission_classes = (IsAuthenticated,)
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # @method_decorator(csrf_exempt)
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super(AddUserProject, self).dispatch(request, *args, **kwargs)
     def post(self, request, *args, **kwargs):
         user = request.user
         serializer_data = Input_AddRemoveUser(data=request.data,context={'request': request})
@@ -112,7 +121,10 @@ class AddUserProject(APIView):
 
 class LeaveProject(APIView):
     permission_classes = (IsAuthenticated,)
-
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # @method_decorator(csrf_exempt)
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super(LeaveProject, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -134,6 +146,10 @@ class LeaveProject(APIView):
 
 class DeleteProject(APIView):
     permission_classes = (IsAuthenticated,)
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # @method_decorator(csrf_exempt)
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super(DeleteProject, self).dispatch(request, *args, **kwargs)
     def post(self, request, *args, **kwargs):
         user = request.user
         serializer_data = Input_DeleteProject(data=request.data,context={'request': request})
@@ -153,8 +169,15 @@ class DeleteProject(APIView):
         else:
             return Response('not logged in', status=400)
 
+
+# @method_decorator(csrf_exempt, name='dispatch')
 class CreateProject(APIView):
     permission_classes = (IsAuthenticated,)
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # @method_decorator(csrf_exempt)
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super(CreateProject, self).dispatch(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         user = request.user
         serializer_data = Input_CreateProject(data=request.data, context={'request': request})
