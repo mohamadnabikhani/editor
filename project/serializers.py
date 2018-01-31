@@ -15,6 +15,11 @@ class Output_PojectParticipator(serializers.ModelSerializer):
         model = Project
         fields = ('id', 'name','users')
 
+class Output_CreatedProject(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ('id', 'name')
+
 class Input_PojectParticipator(serializers.Serializer):
     project_id = serializers.IntegerField(required=True)
 

@@ -47,7 +47,7 @@ class Singup(APIView):
         data = serializer_data.data
         try:
             user = user.create_user(data=data,request=request)
-            user = auth_authenticate(request=request, username=user.username, password=user.password)
+            # user = auth_authenticate(request=request, username=user.username, password=user.password)
             auth_login(request=request, user=user)
 
             output_serialized = Output_UserSerializer(instance=user)

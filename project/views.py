@@ -17,6 +17,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from django.contrib.auth.models import AnonymousUser
 
+
 from rest_framework.permissions import (
     AllowAny,
     IsAuthenticated,
@@ -38,6 +39,7 @@ class ProjectListOwn(APIView):
             serializer_data = Output_ProjectList(data = response, many=True, context={'request': request})
             serializer_data.is_valid()
             data = serializer_data.data
+            data = {"data": data}
             return Response(data, status=200)
         else:
             return Response("not logged in", status=400)
@@ -53,6 +55,7 @@ class ProjectListJoint(APIView):
             serializer_data = Output_ProjectList(data = response, many=True, context={'request': request})
             serializer_data.is_valid()
             data = serializer_data.data
+            data = {"data": data}
             return Response(data, status=200)
         else:
             return Response("not logged in", status=400)
@@ -83,6 +86,9 @@ class AddUserProject(APIView):
         if not user.is_anonymous:
             if user == project.owner:
                 project = project.users.add(newuserObj)
+                # serializer_data = Output_CreatedProject(instance=project)
+                # serializer_data.is_valid()
+                # data = serializer_data.data
 
                 return Response("user added", status=200)
             else:
@@ -185,12 +191,21 @@ class CreateProject(APIView):
         project_name = serializer_data.validated_data["name"]
 
         if not user.is_anonymous:
-            project = Project(name=project_name, owner=user)
-            project.save()
+            project_exits = Project.objects.filter(name=project_name)
+            if not project_exits:
+                project = Project(name=project_name, owner=user)
+                project.save()
+                serializer_data = Output_CreatedProject(instance=project)
+                # serializer_data.is_valid()
+                data = serializer_data.data
+                return Response(data, status=200)
+            else:
+                return Response("project existed", status=406)
 
 
 
-            return Response("project created", status=200)
+
+
 
         else:
             return Response('not logged in', status=400)
@@ -209,6 +224,7 @@ class ListPojectParticipator(APIView):
             serializer_data = Output_PojectParticipator(data = response, many=True, context={'request': request})
             serializer_data.is_valid()
             data = serializer_data.data
+            data = {"data" : data}
             return Response(data, status=200)
         else:
             return Response("not logged in", status=400)

@@ -18,6 +18,6 @@ class Project(models.Model):
     file = models.FileField(upload_to=user_directory_path, null=True, blank=True)
 
     class Meta:
-        unique_together = ('name', 'owner',)
+        unique_together = ('name', 'owner')
 
 
